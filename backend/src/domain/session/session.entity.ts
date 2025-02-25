@@ -3,6 +3,8 @@ import { MoveUserReqDto } from './dto/move-user.req.dto';
 import { RemoveUserReqDto } from './dto/remove-user.req.dto';
 import { SessionError } from './error/session.error';
 import { SessionErrorType } from './error/session.error.type';
+import { AddUserReqDto } from './dto/add-user.req.dto';
+import { plainToInstance } from 'class-transformer';
 
 export class SessionEntity {
     readonly sessionId: string; // 고유 키
@@ -32,6 +34,15 @@ export class SessionEntity {
         this.validatePartyName(partyName);
 
         this.parties[partyName] = party;
+    }
+
+    addUser(addUserReqDto: AddUserReqDto) {
+        const user = plainToInstance(UserEntity, {
+            username: addUserReqDto.username,
+            className: addUserReqDto.className,
+        });
+
+        this.parties['solo'].push(user);
     }
 
     moveUser(moveUserReqDto: MoveUserReqDto) {

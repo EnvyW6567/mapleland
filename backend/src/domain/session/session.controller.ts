@@ -1,6 +1,6 @@
 import { Controller, Sse, Param, Req, Post, Body } from '@nestjs/common';
 import { Request } from 'express';
-import { Observable, Subject } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 import { SessionService } from './session.service';
 import { AddUserReqDto } from './dto/add-user.req.dto';
 import { MoveUserReqDto } from './dto/move-user.req.dto';
@@ -20,7 +20,11 @@ export class SessionController {
         @Param('sessionId') sessionId: string,
         @Req() req: Request,
     ): Promise<Observable<any>> {
-        const events$ = new Subject();
+        const parties = await this.sessionService.getSessionParties(sessionId);
+        const events$ = new BehaviorSubject({
+            type: 'CONNECT',
+            data: { parties },
+        });
 
         req.on('close', () => {
             console.log(`Client disconnected from session ${sessionId}`);
@@ -29,7 +33,10 @@ export class SessionController {
 
         await this.sessionService.subscribeToSessionEvents((event) => {
             if (event.sessionId === sessionId) {
-                events$.next({ data: event });
+                events$.next({
+                    type: 'UPDATE',
+                    data: event,
+                });
             }
         });
 
