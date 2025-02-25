@@ -4,6 +4,7 @@ import { Observable, Subject } from 'rxjs';
 import { SessionService } from './session.service';
 import { AddUserReqDto } from './dto/add-user.req.dto';
 import { MoveUserReqDto } from './dto/move-user.req.dto';
+import { RemoveUserReqDto } from './dto/remove-user.req.dto';
 
 @Controller('session')
 export class SessionController {
@@ -43,5 +44,10 @@ export class SessionController {
     @Post('move')
     async moveUser(@Body() moveUserReqDto: MoveUserReqDto) {
         return this.sessionService.moveUser(moveUserReqDto);
+    }
+
+    @Post('remove')
+    async removeUser(@Body() removeUserReqDto: RemoveUserReqDto) {
+        return this.sessionService.removeUser(removeUserReqDto);
     }
 }

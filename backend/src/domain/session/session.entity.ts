@@ -1,5 +1,8 @@
 import { UserEntity } from '../user/user.entity';
 import { MoveUserReqDto } from './dto/move-user.req.dto';
+import { RemoveUserReqDto } from './dto/remove-user.req.dto';
+import { SessionError } from './error/session.error';
+import { SessionErrorType } from './error/session.error.type';
 
 export class SessionEntity {
     readonly sessionId: string; // 고유 키
@@ -26,14 +29,15 @@ export class SessionEntity {
     }
 
     updateParty(party: UserEntity[], partyName: string) {
-        if (!(partyName in this.parties)) {
-            throw new Error('Invalid party name');
-        }
+        this.validatePartyName(partyName);
 
         this.parties[partyName] = party;
     }
 
     moveUser(moveUserReqDto: MoveUserReqDto) {
+        this.validatePartyName(moveUserReqDto.fromPartyName);
+        this.validatePartyName(moveUserReqDto.toPartyName);
+
         const newParty = this.parties[moveUserReqDto.fromPartyName].filter(
             (user: UserEntity) => user.username !== moveUserReqDto.username,
         );
@@ -43,5 +47,22 @@ export class SessionEntity {
             username: moveUserReqDto.username,
             className: moveUserReqDto.className,
         });
+    }
+
+    removeUser(removeUserReqDto: RemoveUserReqDto) {
+        this.validatePartyName(removeUserReqDto.partyName);
+
+        const newParty = this.parties[removeUserReqDto.partyName].filter(
+            (user: UserEntity) => user.username !== removeUserReqDto.username,
+        );
+
+        this.updateParty(newParty, removeUserReqDto.partyName);
+    }
+
+    validatePartyName(partyName: string) {
+        if (partyName in this.parties) {
+            return;
+        }
+        throw new SessionError(SessionErrorType.INVALID_PARTY_NAME);
     }
 }

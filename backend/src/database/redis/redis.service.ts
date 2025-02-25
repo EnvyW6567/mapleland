@@ -47,7 +47,6 @@ export class RedisService implements OnModuleInit, OnModuleDestroy {
 
     // 메시지 발행
     async publish(channel: string, message: any) {
-        console.log('published'); //TODO: delete
         await this.pubClient.publish(channel, JSON.stringify(message));
     }
 

@@ -6,6 +6,9 @@ import { SessionResDto } from './dto/session.res.dto';
 import { AddUserReqDto } from './dto/add-user.req.dto';
 import { MoveUserReqDto } from './dto/move-user.req.dto';
 import { UserEntity } from '../user/user.entity';
+import { SessionError } from './error/session.error';
+import { SessionErrorType } from './error/session.error.type';
+import { RemoveUserReqDto } from './dto/remove-user.req.dto';
 
 @Injectable()
 export class SessionService {
@@ -35,7 +38,8 @@ export class SessionService {
             this.SESSION_PREFIX,
             addUserReqDto.sessionId,
         );
-        if (!sessionData) throw new Error('Session not found'); //TODO: CustomError
+        if (!sessionData)
+            throw new SessionError(SessionErrorType.SESSION_NOT_FOUND);
 
         const session = plainToInstance(SessionEntity, JSON.parse(sessionData));
         const user = plainToInstance(UserEntity, {
@@ -67,45 +71,49 @@ export class SessionService {
             moveUserReqDto.sessionId,
         );
 
-        if (!sessionData) throw new Error('Session not found'); //TODO: CustomError
-        const session = plainToInstance(SessionEntity, JSON.parse(sessionData));
-
-        if (!this.isValidPartyName(moveUserReqDto, session))
-            throw new Error('Invalid party name');
+        if (!sessionData)
+            throw new SessionError(SessionErrorType.SESSION_NOT_FOUND);
+        const session: SessionEntity = plainToInstance(
+            SessionEntity,
+            JSON.parse(sessionData),
+        );
 
         session.moveUser(moveUserReqDto);
-        await this.redisService.hset(
-            this.SESSION_PREFIX,
-            moveUserReqDto.sessionId,
-            session,
-        );
-        await this.redisService.publish(this.SESSION_EVENTS, {
-            type: 'USER_MOVED',
-            sessionId: moveUserReqDto.sessionId,
-            parties: session.parties,
-        });
+        await this.broadcastSession(moveUserReqDto.sessionId, session);
     }
 
-    // 🔹 세션에서 사용자 제거
-    async removeUserFromSession(sessionId: string, userId: string) {
-        const session = await this.redisService.hget(
+    async removeUser(removeUserReqDto: RemoveUserReqDto) {
+        const sessionData = await this.redisService.hget(
             this.SESSION_PREFIX,
-            sessionId,
+            removeUserReqDto.sessionId,
         );
-        if (!session) throw new Error('Session not found'); //TODO: CustomError
 
-        session.users = session.users.filter((id: string) => id !== userId);
+        if (!sessionData)
+            throw new SessionError(SessionErrorType.SESSION_NOT_FOUND);
+        const session: SessionEntity = plainToInstance(
+            SessionEntity,
+            JSON.parse(sessionData),
+        );
 
-        await this.redisService.hset(this.SESSION_PREFIX, sessionId, session);
-        await this.redisService.publish(this.SESSION_EVENTS, {
-            type: 'USER_LEFT',
-            sessionId,
-            userId,
-        });
+        session.removeUser(removeUserReqDto);
+        await this.broadcastSession(removeUserReqDto.sessionId, session);
     }
 
     async subscribeToSessionEvents(callback: (event: any) => void) {
         await this.redisService.subscribe(this.SESSION_EVENTS, callback);
+    }
+
+    private async broadcastSession(sessionId: string, session: SessionEntity) {
+        await this.redisService.hset(
+            this.SESSION_PREFIX,
+            sessionId,
+            JSON.stringify(session),
+        );
+        await this.redisService.publish(this.SESSION_EVENTS, {
+            type: 'USER_LEFT',
+            sessionId,
+            parties: session.parties,
+        });
     }
 
     private createRandomSessionId() {
@@ -119,15 +127,5 @@ export class SessionService {
         }
 
         return sessionId;
-    }
-
-    private isValidPartyName(
-        moveUserReqDto: MoveUserReqDto,
-        session: SessionEntity,
-    ) {
-        return (
-            moveUserReqDto.fromPartyName in session.parties &&
-            moveUserReqDto.toPartyName in session.parties
-        );
     }
 }
