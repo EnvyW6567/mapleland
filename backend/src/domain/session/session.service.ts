@@ -26,7 +26,7 @@ export class SessionService {
 
         return plainToInstance(SessionResDto, {
             sessionId: sessionId,
-            parties: session.getParties,
+            parties: session.parties,
         });
     }
 
@@ -42,7 +42,7 @@ export class SessionService {
             username: addUserReqDto.username,
             className: addUserReqDto.className,
         });
-        const parties = session.getParties();
+        const parties = session.parties;
 
         parties['solo'] = parties['solo'] || [];
         parties['solo'].push(user);
@@ -68,15 +68,12 @@ export class SessionService {
         );
 
         if (!sessionData) throw new Error('Session not found'); //TODO: CustomError
-
         const session = plainToInstance(SessionEntity, JSON.parse(sessionData));
-        console.log(session);
-        console.log(JSON.parse(sessionData));
 
         if (!this.isValidPartyName(moveUserReqDto, session))
             throw new Error('Invalid party name');
-        session.moveUser(moveUserReqDto);
 
+        session.moveUser(moveUserReqDto);
         await this.redisService.hset(
             this.SESSION_PREFIX,
             moveUserReqDto.sessionId,
@@ -85,7 +82,7 @@ export class SessionService {
         await this.redisService.publish(this.SESSION_EVENTS, {
             type: 'USER_MOVED',
             sessionId: moveUserReqDto.sessionId,
-            parties: session.getParties(),
+            parties: session.parties,
         });
     }
 
@@ -129,8 +126,8 @@ export class SessionService {
         session: SessionEntity,
     ) {
         return (
-            moveUserReqDto.fromPartyName in session.getParties() &&
-            moveUserReqDto.toPartyName in session.getParties()
+            moveUserReqDto.fromPartyName in session.parties &&
+            moveUserReqDto.toPartyName in session.parties
         );
     }
 }

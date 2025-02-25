@@ -3,7 +3,7 @@ import { MoveUserReqDto } from './dto/move-user.req.dto';
 
 export class SessionEntity {
     readonly sessionId: string; // 고유 키
-    private parties: Record<string, Array<UserEntity>>;
+    readonly parties: Record<string, Array<UserEntity>>;
 
     constructor(sessionId: string) {
         this.sessionId = sessionId;
@@ -21,16 +21,8 @@ export class SessionEntity {
         };
     }
 
-    getParties(): Record<string, Array<UserEntity>> {
-        return this.parties;
-    }
-
     getSessionId(): string {
         return this.sessionId;
-    }
-
-    getAllUsers(): Array<UserEntity> {
-        return Object.values(this.parties).flat();
     }
 
     updateParty(party: UserEntity[], partyName: string) {
