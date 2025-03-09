@@ -1,0 +1,77 @@
+/* 전체 페이지 배경 및 레이아웃 */
+.landingPage {
+    position: relative;
+    height: 100vh;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    /* 상대 경로 사용: LandingPage.module.css의 위치가 src/component/landingPage 이므로 */
+    background-image: url('../../asset/images/background.jpg');
+    background-size: cover;
+    background-position: center;
+}
+
+/* 배경 오버레이: 투명한 검정색 */
+.landingPage__background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 1;
+}
+
+/* 헤더 영역: 로고 중앙 정렬 */
+.landingPage__header {
+    position: absolute;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 2;
+}
+
+/* 로고 이미지 */
+.landingPage__logo {
+    max-width: 200px;
+    height: auto;
+    margin-bottom: 20px;
+}
+
+/* 메인 영역: 버튼 중앙 배치 */
+.landingPage__main {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* 버튼 공통 스타일 */
+.landingPage__button {
+    padding: 15px 30px;
+    font-size: var(--font-size-lg);  /* 전역 변수 사용 (index.css에서 정의) */
+    margin: 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+/* 각 버튼별 스타일 */
+.landingPage__button--new {
+    background-color: var(--color-primary); /* 전역 변수 활용 */
+    color: #fff;
+}
+
+.landingPage__button--join {
+    background-color: var(--color-secondary);
+    color: #fff;
+}
+
+/* 버튼 hover 효과 */
+.landingPage__button:hover {
+    opacity: 0.9;
+}

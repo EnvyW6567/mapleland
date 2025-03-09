@@ -1,0 +1,99 @@
+/* 전체 화면을 덮는 오버레이 */
+.modalOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* 모달 컨테이너 */
+.modalContainer {
+    width: 480px;
+    background-color: #eef3ff;
+    border: 4px solid var(--color-primary); /* 메이플스토리 대화창 느낌의 파란톤 */
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.3);
+    position: relative;
+    display: flex;
+    flex-direction: column;
+}
+
+/* 상단 헤더 */
+.modalHeader {
+    display: flex;
+    color: var(--color-text-white);
+    align-items: center;
+    padding: 10px 15px;
+    background-color: var(--color-primary);
+}
+
+.modalTitle {
+    font-size: 1.1rem;
+    font-weight: bold;
+}
+
+/* 본문 */
+.modalBody {
+    border-radius: 8px;
+    padding: 15px;
+    flex: 1;
+}
+
+.inputGroup {
+    margin-bottom: 1rem;
+}
+
+.inputGroup label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: bold;
+}
+
+input[type="text"],
+textarea {
+    width: 100%;
+    padding: 0.5rem;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: var(--font-size-base, 16px);
+    font-family: inherit;
+}
+
+/* 하단 버튼 영역 */
+.modalFooter {
+    display: flex;
+    justify-content: flex-end;
+    border-top: 2px solid #9eb7d6;
+    border-radius: 0 0 8px 8px;
+    background-color: var(--color-white-blue);
+    padding: 10px 15px;
+}
+
+.button {
+    width: 80px;
+    color: var(--color-text-white);
+    border: 1px solid #8fa6c8;
+    border-radius: 8px;
+    padding: 6px 12px;
+    margin-left: 8px;
+    cursor: pointer;
+    transition: opacity 0.3s;
+}
+
+#participateBtn {
+    background-color: var(--color-secondary);
+}
+
+#cancelBtn {
+    background-color: var(--color-tertiary);
+}
+
+.button:hover {
+    opacity: 0.6;
+}
