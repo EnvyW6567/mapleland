@@ -1,0 +1,61 @@
+.expeditionPage {
+    padding: 20px;
+}
+
+.expeditionPage__header {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.expeditionPage__logo {
+    max-width: 150px;
+}
+
+.expeditionPage__main {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: center;
+}
+
+.party {
+    background-color: #f8f9fa;
+    border: 1px solid #ddd;
+    padding: 15px;
+    width: 300px;
+    border-radius: 8px;
+}
+
+.party__title {
+    text-align: center;
+    margin-bottom: 10px;
+    font-size: var(--font-size-lg);
+}
+
+.party__members {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.party__member {
+    padding: 5px;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.party__addButton {
+    padding: 8px 12px;
+    font-size: var(--font-size-base);
+    background-color: var(--color-primary);
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: opacity 0.3s;
+}
+
+.party__addButton:hover {
+    opacity: 0.7;
+}
