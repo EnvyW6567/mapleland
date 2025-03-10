@@ -4,10 +4,19 @@ import styles from './LandingPage.module.css';
 import logo from '../../asset/images/logo.png';
 import InvitationModal from '../inviationModal/InvitationModal';
 import { createSession } from '../../api/createSession';
+import { useStore } from '../../store/useStore';
+import { Parties } from '../expeditionPage/ExpeditionPage';
+
+export type Session = {
+    sessionId: string;
+    parties: Parties;
+}
 
 const LandingPage: React.FC = () => {
     const navigate = useNavigate();
+    const initSession = useStore((state) => state.initSession);
     const [isModalOpen, setIsModalOpen] = useState(false);
+
 
     const handleOpenModal = () => {
         setIsModalOpen(true);
@@ -24,9 +33,10 @@ const LandingPage: React.FC = () => {
     };
 
     const handleCreateExpedition = async () => {
-        const session = await createSession();
-        console.log(session);
+        const session: Session = await createSession();
 
+        console.log(session);
+        initSession(session);
         navigate('/expedition');
     };
 
