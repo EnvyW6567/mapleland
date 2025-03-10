@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import styles from './LandingPage.module.css';
 import logo from '../../asset/images/logo.png';
 import InvitationModal from '../inviationModal/InvitationModal';
+import { createSession } from '../../api/createSession';
 
 const LandingPage: React.FC = () => {
     const navigate = useNavigate();
@@ -22,7 +23,10 @@ const LandingPage: React.FC = () => {
         setIsModalOpen(false);
     };
 
-    const handleCreateExpedition = () => {
+    const handleCreateExpedition = async () => {
+        const session = await createSession();
+        console.log(session);
+
         navigate('/expedition');
     };
 
