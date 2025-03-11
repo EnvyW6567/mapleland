@@ -23,7 +23,7 @@ export class SessionController {
         const parties = await this.sessionService.getSessionParties(sessionId);
         const events$ = new BehaviorSubject({
             type: 'CONNECT',
-            data: { parties },
+            data: parties,
         });
 
         req.on('close', () => {
